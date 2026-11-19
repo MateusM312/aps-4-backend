@@ -1,0 +1,39 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from database import get_db
+from schema.participantes_model import ParticipanteCreate, ParticipanteResponse
+from services import participantes_service
+
+router = APIRouter(prefix="/participantes", tags=["Participante"])
+
+# Cadastrar participante:
+# POST /participantes
+@router.post("/", response_model=ParticipanteResponse, status_code=201)
+def cadastrar_participante(dados: ParticipanteCreate, db: Session = Depends(get_db)):
+    return participantes_service.criar_participante(db, dados)
+
+# Listar participantes:
+# GET /participantes
+@router.get("/", response_model=list[ParticipanteResponse])
+def listar_participantes(db: Session = Depends(get_db)):
+    return participantes_service.listar_participantes(db)
+
+# Consultar participante:
+# GET /participantes/{id}
+@router.get("/{id}", response_model=ParticipanteResponse)
+def consultar_participante(id: int, db: Session = Depends(get_db)):
+    return participantes_service.buscar_participante(db, id)
+
+# Atualizar participante:
+# PUT /participantes/{id}
+@router.put("/{id}", response_model=ParticipanteResponse)
+def atualizar_participantes(id: int, dado: ParticipanteResponse, db: Session = Depends(get_db)):
+    return participantes_service.editar_participante(db, id, dado)
+
+# Excluir participante:
+# DELETE /participantes/{id}
+@router.delete("/{id}")
+def excluir_participantes(id: int, db: Session = Depends(get_db)):
+    participantes_service.excluir_participante(db, id)
+    return {"mensagem": "Participante removido"}
