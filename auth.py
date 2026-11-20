@@ -7,7 +7,7 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import UsuarioModel
+from models.model import UsuarioModel
 
 SECRET_KEY = "Dorminapraca1911"
 ALGORITH = "HS256"
@@ -37,7 +37,7 @@ def decodificar_token(token: str) -> str:
         return payload["sub"]
     except jwt.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token expirado")
-    except jwt.InvalidaTokenError:
+    except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Token invalido")
 
 def get_usuario_atual(credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)) -> UsuarioModel:

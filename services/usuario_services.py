@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 import repositories.usuario_repository
 import auth
 from models.model import UsuarioModel
-from schema import UsuarioCreate, LoginRequest
+from schema.usuario_schema import UsuarioCreate, LoginRequest
 
 repository = repositories.usuario_repository
 
@@ -15,6 +15,7 @@ def cadastrar_usuario(db: Session, dados: UsuarioCreate) -> UsuarioModel:
 
     usuario = UsuarioModel(
         email=dados.email,
+        nome=dados.nome,
         senha_hash=auth.gerar_hash_senha(dados.senha),
         perfil=dados.perfil.value
     )
