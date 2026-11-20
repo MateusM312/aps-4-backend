@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from auth import exigir_admin
 from database import get_db
 from schema.eventos_model import EventoCreate, EventoResponse
 from schema.participantes_model import ParticipanteResponse
 from services import eventos_services
+from models.model import UsuarioModel
 
 router = APIRouter(prefix="/eventos", tags=["Eventos"])
 
@@ -12,7 +14,7 @@ router = APIRouter(prefix="/eventos", tags=["Eventos"])
 # POST /eventos
 # Deverá receber os dados do evento em formato JSON e retornar o evento cadastrado.
 @router.post("/", response_model=EventoResponse, status_code=201)
-def cadastrar_evento(evento: EventoCreate, db: Session = Depends(get_db)):
+def cadastrar_evento(evento: EventoCreate, db: Session = Depends(get_db), usuario_logado: UsuarioModel = Depends(exigir_admin)):
     return eventos_services.criar_evento(db, evento)
 
 
@@ -38,7 +40,7 @@ def consultar_evento(id: int, db: Session = Depends(get_db)):
 # PUT /eventos/{id}
 # Deverá permitir a atualização dos dados de um evento existente.
 @router.put("/{id}", response_model=EventoResponse)
-def atualizar_evento(id: int, evento: EventoCreate, db: Session = Depends(get_db)):
+def atualizar_evento(id: int, evento: EventoCreate, db: Session = Depends(get_db), usuario_logado: UsuarioModel = Depends(exigir_admin)):
     return eventos_services.editar_evento(db, id, evento)
 
 
@@ -46,7 +48,7 @@ def atualizar_evento(id: int, evento: EventoCreate, db: Session = Depends(get_db
 # DELETE /eventos/{id}
 # Deverá remover um evento existente.
 @router.delete("/{id}")
-def excluir_evento(id: int, db: Session = Depends(get_db)):
+def excluir_evento(id: int, db: Session = Depends(get_db), usuario_logado: UsuarioModel = Depends(exigir_admin)):
     eventos_services.excluir_evento(db, id)
     return {"mensagem": "Evento removido"}
 

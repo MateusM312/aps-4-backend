@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 
 import jwt
 from fastapi import Depends, HTTPException
-from fastapi.security import HTTPAuthorozationCredentials, HTTPBearer
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
@@ -19,6 +19,7 @@ security = HTTPBearer()
 
 def gerar_hash_senha(senha:str) -> str:
     return pwd_context.hash(senha)
+
 
 def verificar_senha(senha: str, hash_senha: str) -> bool:
     return pwd_context.verify(senha, hash_senha)
@@ -39,7 +40,7 @@ def decodificar_token(token: str) -> str:
     except jwt.InvalidaTokenError:
         raise HTTPException(status_code=401, detail="Token invalido")
 
-def get_usuario_atual(credentials: HTTPAuthorozationCredentials = Depends(security), db: Session = Depends(get_db)) -> UsuarioModel:
+def get_usuario_atual(credentials: HTTPAuthorizationCredentials = Depends(security), db: Session = Depends(get_db)) -> UsuarioModel:
     email = decodificar_token(credentials.credentials)
 
     usuario = db.query(UsuarioModel).filter(UsuarioModel.email == email).first()
@@ -48,7 +49,7 @@ def get_usuario_atual(credentials: HTTPAuthorozationCredentials = Depends(securi
 
     return usuario
 
-def exigir_admin(usuario: UsuarioModel = Depends(get_usuario_atual)) -> UsuarioModel:
+def exigir_admin(usuario: UsuarioModel = Depends(get_usuario_atual)) -> UsuarioModel:   
     if usuario.perfil != "ADMIN":
         raise HTTPException(status_code=403, detail="Apenas usuários administradores podem realizar essa ação")
     return usuario
