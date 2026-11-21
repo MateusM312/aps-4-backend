@@ -11,7 +11,7 @@ class UsuarioModel(Base):
     nome = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True, index=True)
     senha_hash = Column(String, nullable=False)
-    perfil = Column(String, nullable=False, default="CLIENTE")
+    perfil = Column(String, nullable=False, default="usuario")
 
 class ParticipantesModel(Base):
     __tablename__ ="participantes"

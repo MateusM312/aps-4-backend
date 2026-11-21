@@ -1,24 +1,41 @@
-from pydantic import BaseModel, Field
 from enum import Enum
 
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+
+
 class Perfil(str, Enum):
-    ADMIN = "ADMIN"
-    CLIENTE = "CLIENTE"
+    ADMINISTRADOR = "administrador"
+    USUARIO = "usuario"
+
 
 class UsuarioCreate(BaseModel):
-    email: str
+    # Não existe campo "perfil": quem se cadastra é sempre "usuario".
+    # Se alguém mandar "perfil" no JSON, o Pydantic simplesmente ignora.
     nome: str = Field(min_length=1)
+    email: EmailStr
     senha: str = Field(min_length=6, description="minimo 6 caracteres")
-    perfil: Perfil = Perfil.CLIENTE
+
+    @field_validator("nome")
+    @classmethod
+    def nome_nao_pode_ser_vazio(cls, valor: str) -> str:
+        valor = valor.strip()
+        if not valor:
+            raise ValueError("O nome não pode ser vazio")
+        return valor
+
 
 class UsuarioResponse(BaseModel):
     id: int
-    email: str
+    nome: str
+    email: EmailStr
     perfil: Perfil
+    model_config = ConfigDict(from_attributes=True)
+
 
 class LoginRequest(BaseModel):
-    email:str
-    senha:str
+    email: EmailStr
+    senha: str
+
 
 class TokenResponse(BaseModel):
     access_token: str

@@ -26,3 +26,6 @@ def atualizar(db: Session, participante: ParticipantesModel, dados) -> Participa
     db.commit()
     db.refresh(participante)
     return participante
+
+def buscar_por_email(db: Session, email: str) -> ParticipantesModel | None:
+    return db.query(ParticipantesModel).filter(ParticipantesModel.email == email).first()
