@@ -76,8 +76,16 @@ $env:ADMIN_SENHA="senha-do-admin"
 Prompt de Comando (cmd):
 
 set SECRET_KEY=uma-chave-longa-e-aleatoria
+
+-> $env:SECRET_KEY="uma-chave-longa-e-aleatoria"
+
 set ADMIN_EMAIL=admin@exemplo.com
+
+-> $env:ADMIN_EMAIL="admin@exemplo.com
+
 set ADMIN_SENHA=senha-do-admin
+
+-> $env:ADMIN_SENHA="123456"
 
 Linux / Mac:
 
